@@ -138,6 +138,7 @@ function filterTransactions() {
 }
 
 /* ================= ANALYTICS ================= */
+/* ================= ANALYTICS ================= */
 let ANALYTICS_TX = [];
 let CAT_CHART = null;
 let MONTH_CHART = null;
@@ -337,139 +338,6 @@ function renderTransactionList(tx, category) {
     `;
     el.appendChild(div);
   });
-}
-let analyticsChart;
-let allTx = [];
-
-async function initAnalytics() {
-  const res = await fetch(API_URL);
-  allTx = await res.json();
-
-  setupFilters();
-  renderAnalytics();
-}
-
-function setupFilters() {
-  const years = [...new Set(allTx.map(t => t.YEAR))];
-  const months = [...new Set(allTx.map(t => t.MONTH))];
-  const locations = [...new Set(allTx.map(t => t.LOCATION))];
-  const categories = [...new Set(allTx.map(t => t.CATEGORY))];
-
-  fillSelect("filterYear", years, true);
-  fillSelect("filterMonth", months, true);
-  fillSelect("filterLocation", locations, true);
-  fillSelect("filterCategory", categories, true);
-
-  document
-    .querySelectorAll(".filter-row select")
-    .forEach(el => el.addEventListener("change", renderAnalytics));
-}
-
-function fillSelect(id, items, allowAll) {
-  const el = document.getElementById(id);
-  el.innerHTML = "";
-
-  if (allowAll) {
-    el.innerHTML += `<option value="ALL">All</option>`;
-  }
-
-  items.forEach(v => {
-    el.innerHTML += `<option value="${v}">${v}</option>`;
-  });
-}
-
-function renderAnalytics() {
-  const year = filterValue("filterYear");
-  const month = filterValue("filterMonth");
-  const location = filterValue("filterLocation");
-  const category = filterValue("filterCategory");
-
-  const filtered = allTx.filter(t =>
-    (year === "ALL" || t.YEAR == year) &&
-    (month === "ALL" || t.MONTH == month) &&
-    (location === "ALL" || t.LOCATION === location) &&
-    (category === "ALL" || t.CATEGORY === category)
-  );
-
-  renderSummary(filtered);
-  renderChart(filtered);
-  renderTxList(filtered);
-}
-
-function filterValue(id) {
-  return document.getElementById(id).value;
-}
-function renderChart(data) {
-  const income = {};
-  const expense = {};
-
-  data.forEach(t => {
-    const target = t.TYPE === "INCOME" ? income : expense;
-    target[t.CATEGORY] = (target[t.CATEGORY] || 0) + Number(t.AMOUNT);
-  });
-
-  const categories = [...new Set([...Object.keys(income), ...Object.keys(expense)])];
-
-  const datasets = categories.map(cat => ({
-    label: cat,
-    data: [
-      income[cat] || 0,
-      expense[cat] || 0
-    ]
-  }));
-
-  if (analyticsChart) analyticsChart.destroy();
-
-  analyticsChart = new Chart(document.getElementById("analyticsChart"), {
-    type: "bar",
-    data: {
-      labels: ["Income", "Expense"],
-      datasets
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: "bottom" }
-      },
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true }
-      }
-    }
-  });
-}
-function renderSummary(data) {
-  let income = 0, expense = 0;
-
-  data.forEach(t => {
-    if (t.TYPE === "INCOME") income += Number(t.AMOUNT);
-    else expense += Number(t.AMOUNT);
-  });
-
-  document.getElementById("sumIncome").textContent = income.toLocaleString();
-  document.getElementById("sumExpense").textContent = expense.toLocaleString();
-  document.getElementById("sumBalance").textContent =
-    (income - expense).toLocaleString();
-}
-
-function renderTxList(data) {
-  const box = document.getElementById("txList");
-  box.innerHTML = "";
-
-  data
-    .sort((a, b) => new Date(b.DATE) - new Date(a.DATE))
-    .forEach(t => {
-      box.innerHTML += `
-        <div class="tx-row">
-          <span>${t.DATE} · ${t.CATEGORY}</span>
-          <span>${Number(t.AMOUNT).toLocaleString()}</span>
-        </div>
-      `;
-    });
-
-  if (!data.length) {
-    box.innerHTML = `<p style="text-align:center;color:#888">No data</p>`;
-  }
 }
 
 
