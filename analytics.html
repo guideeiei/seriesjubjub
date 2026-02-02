@@ -1,44 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Analytics</title>
 
-<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script defer src="main.js"></script>
+<script src="main.js" defer></script>
 </head>
 
 <body onload="initAnalytics()">
 
-<section id="analyticsPage" class="page">
+<section id="analyticsPage">
 
-  <!-- FILTER -->
-  <div class="filter-row">
-    <select id="filterYear"></select>
-    <select id="filterMonth"></select>
-    <select id="filterLocation"></select>
-    <select id="filterCategory"></select>
+  <h2 class="page-title">Analytics</h2>
+
+  <!-- ===== CONTROLS ===== -->
+  <div class="analytics-controls">
+    <select id="analytics-year"></select>
+    <select id="analytics-month"></select>
+    <select id="analytics-location">
+      <option value="">All Locations</option>
+    </select>
+    <select id="analytics-category">
+      <option value="">All Categories</option>
+    </select>
   </div>
 
-  <!-- CHART -->
-  <div class="chart-box">
-    <canvas id="analyticsChart"></canvas>
+  <!-- ===== MONTH SUMMARY ===== -->
+  <div class="chart-card">
+    <h3>Monthly Income vs Expense</h3>
+    <canvas id="monthlyChart"></canvas>
   </div>
 
-  <!-- SUMMARY -->
-  <div class="summary-box">
-    <div><span>Income</span><b id="sumIncome">0</b></div>
-    <div><span>Expense</span><b id="sumExpense">0</b></div>
-    <div><span>Balance</span><b id="sumBalance">0</b></div>
+  <!-- ===== CATEGORY ===== -->
+  <div class="chart-card">
+    <h3>Expense by Category</h3>
+    <canvas id="categoryChart"></canvas>
   </div>
 
-  <!-- TRANSACTIONS -->
-  <div class="tx-box">
-    <h3>Transactions</h3>
-    <div id="txList"></div>
-  </div>
+  <!-- ===== TRANSACTIONS ===== -->
+  <h3 id="categoryTitle">Transactions</h3>
+  <div id="categoryTxList"></div>
+
+  <nav>
+    <button onclick="goFund()">💰</button>
+    <button onclick="goHome()">🏠</button>
+  </nav>
 
 </section>
 
