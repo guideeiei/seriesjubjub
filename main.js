@@ -142,6 +142,7 @@ function filterTransactions() {
 let ANALYTICS_TX = [];
 let CAT_CHART = null;
 let MONTH_CHART = null;
+let STACKED_CHART = null;
 
 async function initAnalytics() {
   const data = await fetchData();
@@ -194,26 +195,97 @@ function renderAnalytics() {
   const loc = document.getElementById("analytics-location").value;
   const cat = document.getElementById("analytics-category").value;
 
-  // 🔹 เดือน + location (ภาพรวม)
   const monthTx = ANALYTICS_TX.filter(t => {
     const d = new Date(t.date);
     return (
       d.getFullYear() === y &&
-      d.getMonth()+1 === m &&
+      d.getMonth() + 1 === m &&
       (!loc || t.location === loc)
     );
   });
 
   populateLocationSelector(monthTx);
-  renderMonthlyChart(monthTx);
-  renderCategoryChart(monthTx);
 
-  // 🔹 list = category filter
+  renderStackedChart(monthTx, cat);
+
   const listTx = cat
     ? monthTx.filter(t => t.category === cat)
     : monthTx;
 
   renderTransactionList(listTx, cat);
+}
+
+function renderStackedChart(tx, selectedCategory) {
+  const incomeMap = {};
+  const expenseMap = {};
+
+  tx.forEach(t => {
+    const cat = t.category || "Other";
+    if (selectedCategory && cat !== selectedCategory) return;
+
+    if (t.amount >= 0) {
+      incomeMap[cat] = (incomeMap[cat] || 0) + t.amount;
+    } else {
+      expenseMap[cat] = (expenseMap[cat] || 0) + Math.abs(t.amount);
+    }
+  });
+
+  const categories = Array.from(
+    new Set([...Object.keys(incomeMap), ...Object.keys(expenseMap)])
+  );
+
+  // update category selector (ไม่พัง state)
+  const catEl = document.getElementById("analytics-category");
+  const current = catEl.value;
+  catEl.innerHTML = `<option value="">All Categories</option>`;
+  categories.forEach(c => catEl.add(new Option(c, c)));
+  if (categories.includes(current)) catEl.value = current;
+
+  const datasets = categories.map(c => ({
+    label: c,
+    data: [
+      incomeMap[c] || 0,
+      expenseMap[c] || 0
+    ],
+    stack: "stack1"
+  }));
+
+  const ctx = document.getElementById("stackedChart");
+  if (STACKED_CHART) STACKED_CHART.destroy();
+
+  STACKED_CHART = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Income", "Expense"],
+      datasets
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { stacked: true },
+        y: {
+          stacked: true,
+          ticks: {
+            callback: v => "฿" + v.toLocaleString()
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: c =>
+              `${c.dataset.label}: ฿${c.parsed.y.toLocaleString()}`
+          }
+        }
+      },
+      onClick: (_, els) => {
+        if (!els.length) return;
+        const ds = datasets[els[0].datasetIndex];
+        catEl.value = ds.label;
+        renderAnalytics();
+      }
+    }
+  });
 }
 
 /* ===== LOCATION SELECT ===== */
