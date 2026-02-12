@@ -47,45 +47,77 @@ function renderTransactions(containerId, list) {
 }
 
 /* ================= HOME ================= */
+/* ================= HOME ================= */
 async function initHome() {
   const data = await fetchData();
   const tx = data.allTransactions || [];
-  
-  const totalBalance = tx.reduce(
-  (sum, t) => sum + Number(t.amount),
-  0
-);
 
-const balEl = document.getElementById("cumulative-balance");
-if (balEl) balEl.textContent = "฿" + totalBalance.toLocaleString();
+  if (tx.length === 0) {
+    document.getElementById("cumulative-balance").textContent = "฿0";
+    document.getElementById("monthly-income").textContent = "฿0";
+    document.getElementById("monthly-expense").textContent = "฿0";
+    document.getElementById("monthly-balance").textContent = "฿0";
+    return;
+  }
+
+  /* ===== 1. TOTAL BALANCE (รวมทุก transaction) ===== */
+  const totalBalance = tx.reduce(
+    (sum, t) => sum + Number(t.amount),
+    0
+  );
 
   const balEl = document.getElementById("cumulative-balance");
-  if (balEl) balEl.textContent = "฿" + lastBal.toLocaleString();
+  if (balEl) {
+    balEl.textContent = "฿" + totalBalance.toLocaleString();
+  }
 
-  if (tx.length === 0) return;
+  /* ===== 2. หาเดือนล่าสุดจากข้อมูลจริง ===== */
+  // เรียงตามวันที่ใหม่ -> เก่า
+  tx.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const latestDate = new Date(tx[0].date);
   const latestMonth = latestDate.getMonth() + 1;
   const latestYear = latestDate.getFullYear();
 
+  /* ===== 3. คำนวณ Monthly Summary ===== */
   let income = 0;
   let expense = 0;
 
   tx.forEach(t => {
-    const amt = Number(t.mount);
-    if (d.getMonth() + 1 === latestMonth && d.getFullYear() === latestYear) {
-      if (amt >= 0) income += amt;
-      else expense += Math.abs(amt);
+    const d = new Date(t.date);
+    const amount = Number(t.amount);
+
+    if (
+      d.getMonth() + 1 === latestMonth &&
+      d.getFullYear() === latestYear
+    ) {
+      if (amount >= 0) income += amount;
+      else expense += Math.abs(amount);
     }
   });
 
   document.getElementById("monthly-income").textContent =
     "฿" + income.toLocaleString();
+
   document.getElementById("monthly-expense").textContent =
     "฿" + expense.toLocaleString();
+
   document.getElementById("monthly-balance").textContent =
     "฿" + (income - expense).toLocaleString();
 
+  /* ===== 4. เปลี่ยนชื่อเดือนอัตโนมัติ ===== */
+  const monthNames = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+  ];
+
+  const titleEl = document.getElementById("homeMonthTitle");
+  if (titleEl) {
+    titleEl.textContent =
+      `${monthNames[latestMonth - 1]} ${latestYear} - Monthly Summary`;
+  }
+
+  /* ===== 5. แสดงรายการล่าสุด 20 รายการ ===== */
   renderTransactions("transaction-list", tx.slice(0, 20));
 }
 
