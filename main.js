@@ -73,11 +73,11 @@ async function initHome() {
 
   /* ===== 2. หาเดือนล่าสุดจากข้อมูลจริง ===== */
   // เรียงตามวันที่ใหม่ -> เก่า
-  tx.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
 
-  const latestDate = new Date(tx[0].date);
-  const latestMonth = latestDate.getMonth() + 1;
-  const latestYear = latestDate.getFullYear();
+  const today = new Date();
+  const currentMonth = today.getMonth() + 1;
+  const currentYear = today.getFullYear();
 
   /* ===== 3. คำนวณ Monthly Summary ===== */
   let income = 0;
@@ -88,8 +88,8 @@ async function initHome() {
     const amount = Number(t.amount);
 
     if (
-      d.getMonth() + 1 === latestMonth &&
-      d.getFullYear() === latestYear
+      d.getMonth() + 1 === currentMonth &&
+      d.getFullYear() === currentYear
     ) {
       if (amount >= 0) income += amount;
       else expense += Math.abs(amount);
