@@ -50,9 +50,14 @@ function renderTransactions(containerId, list) {
 async function initHome() {
   const data = await fetchData();
   const tx = data.allTransactions || [];
+  
+  const totalBalance = tx.reduce(
+  (sum, t) => sum + Number(t.amount),
+  0
+);
 
-  const lastBal =
-    data.cumulative?.[data.cumulative.length - 1]?.balance || 0;
+const balEl = document.getElementById("cumulative-balance");
+if (balEl) balEl.textContent = "฿" + totalBalance.toLocaleString();
 
   const balEl = document.getElementById("cumulative-balance");
   if (balEl) balEl.textContent = "฿" + lastBal.toLocaleString();
@@ -67,10 +72,10 @@ async function initHome() {
   let expense = 0;
 
   tx.forEach(t => {
-    const d = new Date(t.date);
+    const amt = Number(t.mount);
     if (d.getMonth() + 1 === latestMonth && d.getFullYear() === latestYear) {
-      if (t.amount >= 0) income += t.amount;
-      else expense += Math.abs(t.amount);
+      if (amt >= 0) income += amt;
+      else expense += Math.abs(amt);
     }
   });
 
