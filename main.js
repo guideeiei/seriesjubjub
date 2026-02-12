@@ -48,38 +48,30 @@ function renderTransactions(containerId, list) {
 
 /* ================= HOME ================= */
 /* ================= HOME ================= */
+/* ================= HOME ================= */
 async function initHome() {
   const data = await fetchData();
   const tx = data.allTransactions || [];
 
   if (tx.length === 0) {
-    document.getElementById("cumulative-balance").textContent = "฿0";
-    document.getElementById("monthly-income").textContent = "฿0";
-    document.getElementById("monthly-expense").textContent = "฿0";
-    document.getElementById("monthly-balance").textContent = "฿0";
+    setHomeValues(0, 0, 0, 0);
     return;
   }
 
-  /* ===== 1. TOTAL BALANCE (รวมทุก transaction) ===== */
-  const totalBalance = tx.reduce(
-    (sum, t) => sum + Number(t.amount),
-    0
-  );
+  /* =========================
+     1. TOTAL BALANCE (ตรงชีต 100%)
+     ========================= */
+  const totalBalance = tx.reduce((sum, t) => {
+    return sum + Number(t.amount);
+  }, 0);
 
-  const balEl = document.getElementById("cumulative-balance");
-  if (balEl) {
-    balEl.textContent = "฿" + totalBalance.toLocaleString();
-  }
-
-  /* ===== 2. หาเดือนล่าสุดจากข้อมูลจริง ===== */
-  // เรียงตามวันที่ใหม่ -> เก่า
-  
-
+  /* =========================
+     2. ใช้เดือนปัจจุบันจริง
+     ========================= */
   const today = new Date();
   const currentMonth = today.getMonth() + 1;
   const currentYear = today.getFullYear();
 
-  /* ===== 3. คำนวณ Monthly Summary ===== */
   let income = 0;
   let expense = 0;
 
@@ -96,16 +88,14 @@ async function initHome() {
     }
   });
 
-  document.getElementById("monthly-income").textContent =
-    "฿" + income.toLocaleString();
+  /* =========================
+     3. ใส่ค่าลงหน้าเว็บ
+     ========================= */
+  setHomeValues(totalBalance, income, expense, income - expense);
 
-  document.getElementById("monthly-expense").textContent =
-    "฿" + expense.toLocaleString();
-
-  document.getElementById("monthly-balance").textContent =
-    "฿" + (income - expense).toLocaleString();
-
-  /* ===== 4. เปลี่ยนชื่อเดือนอัตโนมัติ ===== */
+  /* =========================
+     4. เปลี่ยนชื่อเดือนอัตโนมัติ
+     ========================= */
   const monthNames = [
     "January","February","March","April","May","June",
     "July","August","September","October","November","December"
@@ -114,13 +104,34 @@ async function initHome() {
   const titleEl = document.getElementById("homeMonthTitle");
   if (titleEl) {
     titleEl.textContent =
-      `${monthNames[latestMonth - 1]} ${latestYear} - Monthly Summary`;
+      `${monthNames[currentMonth - 1]} ${currentYear} - Monthly Summary`;
   }
 
-  /* ===== 5. แสดงรายการล่าสุด 20 รายการ ===== */
-  renderTransactions("transaction-list", tx.slice(0, 20));
+  /* =========================
+     5. แสดงรายการล่าสุด (เรียงใหม่ก่อน)
+     ========================= */
+  const sorted = [...tx].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
+
+  renderTransactions("transaction-list", sorted.slice(0, 20));
 }
 
+
+/* =========================
+   Helper ใส่ค่า DOM
+   ========================= */
+function setHomeValues(balance, income, expense, monthlyBalance) {
+  const balEl = document.getElementById("cumulative-balance");
+  const incEl = document.getElementById("monthly-income");
+  const expEl = document.getElementById("monthly-expense");
+  const monthBalEl = document.getElementById("monthly-balance");
+
+  if (balEl) balEl.textContent = "฿" + balance.toLocaleString();
+  if (incEl) incEl.textContent = "฿" + income.toLocaleString();
+  if (expEl) expEl.textContent = "฿" + expense.toLocaleString();
+  if (monthBalEl) monthBalEl.textContent = "฿" + monthlyBalance.toLocaleString();
+}
 /* ================= TRANSACTIONS PAGE ================= */
 let ALL_TX = [];
 
