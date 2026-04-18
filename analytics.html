@@ -1,49 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analytics</title>
-
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="main.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="main.js" defer></script>
 </head>
-
 <body onload="initAnalytics()">
 
-<section id="analyticsPage">
+  <header>
+    <h2>Analytics</h2>
+  </header>
 
-  <h2 class="page-title">Analytics</h2>
+  <section id="analyticsPage">
 
-  <!-- ===== CONTROLS ===== -->
-  <div class="analytics-controls">
-    <select id="analytics-year"></select>
-    <select id="analytics-month"></select>
-    <select id="analytics-location">
-      <option value="">All Locations</option>
-    </select>
-    <select id="analytics-category">
-      <option value="">All Categories</option>
-    </select>
-  </div>
+    <div class="analytics-controls">
+      <select id="analytics-year"></select>
+      <select id="analytics-month"></select>
+      <select id="analytics-location"><option value="">All Locations</option></select>
+      <select id="analytics-category"><option value="">All Categories</option></select>
+    </div>
 
-<!-- ===== STACKED CHART ===== -->
-<div class="chart-card">
-  <h3>Income & Expense by Category</h3>
-  <canvas id="stackedChart"></canvas>
-</div>
+    <div class="chart-card">
+      <h3>Income &amp; Expense by Category</h3>
+      <canvas id="stackedChart"></canvas>
+    </div>
 
-  <!-- ===== TRANSACTIONS ===== -->
-  <h3 id="categoryTitle">Transactions</h3>
-  <div id="categoryTxList"></div>
+    <h3 id="categoryTitle" style="padding:0 0 10px;"></h3>
+    <div id="categoryTxList"></div>
+
+  </section>
 
   <nav>
     <button onclick="goFund()">💰</button>
     <button onclick="goHome()">🏠</button>
+    <button onclick="goAnalytics()">📊</button>
   </nav>
-
-</section>
 
 </body>
 </html>
