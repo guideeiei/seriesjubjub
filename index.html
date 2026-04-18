@@ -1,39 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Home Dashboard</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body><header>
-  <div style="font-size:12px;color:#666">TOTAL BALANCE</div>
-  <h1 id="cumulative-balance">฿0</h1>
-</header>
+<body>
 
-<div class="summary">
-  <strong id="homeMonthTitle"</strong><br>
-  Income: <span id="monthly-income"></span> |
-  Expense: <span id="monthly-expense"></span> |
-  Balance: <span id="monthly-balance"></span>
-</div>
+  <header>
+    <h2>Overview</h2>
+  </header>
 
-<div style="margin:10px">
-  <button class="btn-small" onclick="goTransactionsAll()">ดูรายการทั้งหมด</button>
-</div>
+  <!-- Balance Card -->
+  <div class="balance-card">
+    <div class="balance-label">Total Balance</div>
+    <h1 id="cumulative-balance">฿0</h1>
+  </div>
 
-<div class="transactions" id="transaction-list"></div>
+  <!-- Month label -->
+  <div class="summary-month-label" id="homeMonthTitle">This Month</div>
 
-<nav>
-  <button onclick="goFund()">💰</button>
-  <button onclick="goHome()">🏠</button>
-  <button onclick="goAnalytics()">📊</button>
-</nav>
+  <!-- Summary Strip -->
+  <div class="summary">
+    <div class="summary-item">
+      <div class="summary-item-label">Income</div>
+      <div class="summary-item-value income" id="monthly-income">฿0</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-item-label">Expense</div>
+      <div class="summary-item-value expense" id="monthly-expense">฿0</div>
+    </div>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="main.js"></script>
-<script>
-initHome();
-</script>
+  <!-- Section Header -->
+  <div class="section-header" style="margin-top:20px;">
+    <span class="section-title">Recent</span>
+    <button class="btn-small" onclick="goTransactionsAll()">View All</button>
+  </div>
+
+  <!-- Transaction List -->
+  <div class="transactions" id="transaction-list"></div>
+
+  <nav>
+    <button onclick="goFund()" title="Goals">💰</button>
+    <button onclick="goHome()" title="Home">🏠</button>
+    <button onclick="goAnalytics()" title="Analytics">📊</button>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="main.js"></script>
+  <script>initHome();</script>
 </body>
 </html>
