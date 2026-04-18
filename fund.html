@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fund Goal</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goal Tracker</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h2>Goal Tracker</h2>
-</header>
 
-<div class="summary">
-  <div>Saved: <span id="fund-saved">฿0</span> / Goal: <span id="fund-goal">฿50,000</span></div>
-  <progress id="fund-progress" value="0" max="50000"></progress>
-</div>
+  <header>
+    <h2>Goal Tracker</h2>
+  </header>
 
-<nav>
-  <button onclick="goHome()">🏠</button>
-  <button onclick="goAnalytics()">📊</button>
-</nav>
+  <div class="goal-card">
+    <div class="goal-label">Saved So Far</div>
+    <span id="fund-saved">฿0</span>
+    <div class="goal-target">Target: <strong id="fund-goal" style="color:var(--text);">฿50,000</strong></div>
+    <progress id="fund-progress" value="0" max="50000"></progress>
+  </div>
 
-<script src="main.js"></script>
-<script>
-initFund();
-</script>
+  <nav>
+    <button onclick="goFund()">💰</button>
+    <button onclick="goHome()">🏠</button>
+    <button onclick="goAnalytics()">📊</button>
+  </nav>
+
+  <script src="main.js"></script>
+  <script>
+    if (typeof initFund === 'function') initFund();
+  </script>
 </body>
 </html>
