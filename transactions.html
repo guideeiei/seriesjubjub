@@ -1,28 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transactions</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h2>Transactions</h2>
-  <select id="month-select"></select>
-  <select id="year-select"></select>
-</header>
 
-<div id="all-transaction-list" class="tx-full"></div>
+  <header>
+    <h2>Transactions</h2>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <select id="month-select"></select>
+      <select id="year-select"></select>
+    </div>
+  </header>
 
-<nav>
-  <button onclick="goFund()">💰</button>
-  <button onclick="goHome()">🏠</button>
-</nav>
+  <div style="margin:16px 16px 0;">
+    <div id="all-transaction-list" class="transactions tx-full"></div>
+  </div>
 
-<script src="main.js"></script>
-<script>
-initTransactions();
-</script>
+  <nav>
+    <button onclick="goFund()">💰</button>
+    <button onclick="goHome()">🏠</button>
+    <button onclick="goAnalytics()">📊</button>
+  </nav>
+
+  <script src="main.js"></script>
+  <script>initTransactions();</script>
 </body>
 </html>
